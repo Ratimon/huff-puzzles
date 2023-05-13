@@ -8,5 +8,22 @@
  */
 
 #define macro MAIN() = takes(0) returns(0) {
+
+    // store balance of msg.sender length in memory at offset 0x20
+    // mstore( 0x20, balance of msg.sender) :  return( offset, value)
+
+    caller       // [address of msg.sender]
+    balance      // [balance of msg.sender]
+    0x20         // [ 0x20 , balance of msg.sender]
+    mstore          // [ ] 
+
+    // return self balance
+    // return 32 bytes of memory starting at offset 0x20
+     // return( 0x20, 0x20) :  return( offset, size)
+    0x20        // [32]
+    0x20        // [0x20, 32]
+    return       // []
+
+
    
 }

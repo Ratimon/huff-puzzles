@@ -10,7 +10,6 @@
 
 #define macro MAIN() = takes(0) returns(0) {
 
-
     // store msg.data length in memory at offset 0x20
     // mstore( 0x20, length) :  return( offset, value)
 
