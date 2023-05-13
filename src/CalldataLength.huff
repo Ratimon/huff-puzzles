@@ -9,5 +9,21 @@
 */
 
 #define macro MAIN() = takes(0) returns(0) {
+
+
+    // store msg.data length in memory at offset 0x20
+    // mstore( 0x20, length) :  return( offset, value)
+
+    calldatasize    // [  calldatasize]
+    0x20            // [ 0x20 , calldatasize]
+    mstore          // [ ] 
+
+    // return calldatasize
+    // return 32 bytes of memory starting at offset 0x20
+     // return( 0x20, 0x20) :  return( offset, size)
+    0x20        // [32]
+    0x20        // [0x20, 32]
+    return       // []
+
     
 }

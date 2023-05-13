@@ -3,3 +3,6 @@
 
 2-CallValue:
 	forge test -vvv --mc CallValueTest
+
+3-CalldataLength:
+	forge test -vvv --mc CalldataLengthTest
