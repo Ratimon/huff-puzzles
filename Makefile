@@ -9,3 +9,6 @@
 
 4-MyEtherBalance:
 	forge test -vvv --mc MyEtherBalanceTest
+
+5-Add1:
+	forge test -vvv --mc Add1Test

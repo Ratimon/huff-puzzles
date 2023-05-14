@@ -14,4 +14,68 @@
 
 #define macro MAIN() = takes(0) returns(0) {
 
+    // load 32 bytes of msg.data ( starting from offset 0x0) to the stack
+    // calldataload( 0x0) :  calldataload( offset)
+
+    0x00 calldataload   // [ msg.data]
+
+    // Shift the bits towards the right by 224 bits ( 224/32 = 28).
+    // So, we have a function selector of 4 bytes left (32-28 = 4 bytes)
+    // shr( 224) :  calldataload( # f bits)
+
+    0xE0 shr              // [ the first 4 bytes of msg.data]
+
+
+    __FUNC_SIG(add1)     // [ keccak256("add1(uint256)"),  the first 4 bytes of msg.data]
+
+    // if the left side is equal to the right side, return 1, 0 otherwise.
+    // ( a == b: 1 : if a = b, return 1 )
+    // eq( keccak256("add1(uint256)"), the first 4 bytes of msg.data) :  mstore( a, b)
+    eq                   // [ isFoursBytesEqualToHash ]
+
+    // a + b
+    // jumpi( a, b)
+    add1                 // [ counter of add1 ,  isFoursBytesEqualToHash ]
+
+    // If the result of isFoursBytesEqualToHash is 1 (equal),
+    // it will follow JUMPDEST instruction and not revert.
+    // jumpi( JUMPDEST instruction , isFoursBytesEqualToHash) :  jumpi( offset, value)
+    jumpi                //  [ ] 
+
+    // If the result of isFoursBytesEqualToHash is 0 (not equal),
+    // Revert the return data of call context start at offset 0x00 by size 0x00 
+    // revert( 0x0, 0x0) :  revert( offset, size)
+    0x00 0x00 revert     //  [ ] 
+
+    // Create a jump label (reference to macro ADD_ONE)
+    add1:
+        ADD_ONE()
+
+
+
+
+}
+
+#define macro ADD_ONE() = takes(0) returns(0) {
+
+    // load 32 bytes of msg.data ( starting from offset 0x04) to the stack
+    // calldataload( 0x04) :  calldataload( offset)
+
+    0x04 calldataload    // [ msg.data[4:] ]
+
+    0x01                // [0x1, msg.data[4:]]
+    add                 // [1 + msg.data[4:]]
+
+    // store result of adding in memory at offset 0x20
+    // mstore( 0x20, result of adding) :  mstore( offset, value)
+
+    0x20                // [0x20, 1 + msg.data[4:]]    
+    mstore              // [ ]
+
+    // return the result
+    // return 32 bytes of memory starting at offset 0x20
+    // return( 0x20, 0x20) :  return( offset, size)
+    
+    0x20 0x20 return   
+
 }
