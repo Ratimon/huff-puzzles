@@ -17,4 +17,28 @@
 
 #define macro MAIN() = takes(0) returns(0) {
 
+
+    0x00 calldataload  0xE0 shr        // [ the first 4 bytes of msg.data]
+
+    dup1 __FUNC_SIG(foo) eq foo jumpi  // [ the first 4 bytes of msg.data]
+    dup1 __FUNC_SIG(bar) eq bar jumpi  // [ the first 4 bytes of msg.data]
+
+    // if no matchs are found
+    // Revert the return data of call context start at offset 0x00 by size 0x00 
+    // revert( 0x0, 0x0) :  revert( offset, size)
+    0x00 0x00 revert     //  [  the first 4 bytes of msg.data] 
+
+    foo:
+        0x02 0x00 mstore
+        returnvalue jump
+
+    bar:
+        0x03 0x00 mstore
+        returnvalue jump
+
+    returnvalue:
+        0x20 0x00 return
+
+
+
 }

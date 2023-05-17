@@ -15,3 +15,6 @@
 
 6-NonPayable:
 	forge test -vvv --mc NonPayableTest
+
+7-FooBar:
+	forge test -vvv --mc FooBarTest
