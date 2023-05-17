@@ -59,11 +59,11 @@
 
     dup4                  // [ a * b, a, b, is A Zero, a * b]
 
-    div eq                // [ is (result / a) = b , is A Zero, a * b]
+    div eq                // [ is (result / a) = b, is A Zero, a * b]
 
-    or                    // [ are both checks true, a * b]
+    or                    // [ are check1 or check2 true, a * b]
 
-    end                   // [ counter of end ,  are both checks true, a * b ]
+    end                   // [ counter of end ,  are check1 or check2 true, a * b ]
     
     jumpi                 // []
 

@@ -10,8 +10,8 @@
 4-MyEtherBalance:
 	forge test -vvv --mc MyEtherBalanceTest
 
-5-Add1:
-	forge test -vvv --mc Add1Test
-
 5-Multiply:
 	forge test -vvv --mc MultiplyTest
+
+6-NonPayable:
+	forge test -vvv --mc NonPayableTest

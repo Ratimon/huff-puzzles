@@ -10,4 +10,13 @@
 
 #define macro MAIN() = takes(0) returns(0) {
 
+    callvalue   // [  msg.value]
+    iszero      // [ is msg.value = 0 ]
+    end         // [ counter of end ,  is msg.value = 0]
+    jumpi       // [ ]
+    0x00 0x00 revert     // reverts if wei was sent (msg.value != 0)
+
+    end:
+        0x00 0x00 return
+
 }
