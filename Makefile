@@ -12,3 +12,6 @@
 
 5-Add1:
 	forge test -vvv --mc Add1Test
+
+5-Multiply:
+	forge test -vvv --mc MultiplyTest

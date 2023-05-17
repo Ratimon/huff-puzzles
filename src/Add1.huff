@@ -25,7 +25,6 @@
 
     0xE0 shr              // [ the first 4 bytes of msg.data]
 
-
     __FUNC_SIG(add1)     // [ keccak256("add1(uint256)"),  the first 4 bytes of msg.data]
 
     // if the left side is equal to the right side, return 1, 0 otherwise.
@@ -50,9 +49,6 @@
     // Create a jump label (reference to macro ADD_ONE)
     add1:
         ADD_ONE()
-
-
-
 
 }
 

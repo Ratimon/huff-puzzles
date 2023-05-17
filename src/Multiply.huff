@@ -14,4 +14,65 @@
 
 #define macro MAIN() = takes(0) returns(0) {
 
+    0x00 calldataload     // [ msg.data]
+    0xE0 shr              // [ the first 4 bytes of msg.data]
+    __FUNC_SIG(multiply)  // [ keccak256("multiply(uint256,uint256)"),  the first 4 bytes of msg.data]
+
+    eq                   // [ isFoursBytesEqualToHash ]
+    multiply                 // [ counter of add1 ,  isFoursBytesEqualToHash ]
+    jumpi                //  [ ] 
+
+    0x00 0x00 revert     //  [ ] 
+
+    multiply:
+        MULTIPLY()
+
+}
+
+#define macro MULTIPLY() = takes(0) returns(0) {
+
+    // load 32 bytes of msg.data ( starting from offset 0x4) to the stack
+    // calldataload( 0x04) :  calldataload( offset)
+
+    0x04 calldataload     // [ a]
+
+    // load the second 32 bytes of msg.data ( starting from offset 0x24 - byte 36 ) to the stack
+    // calldataload( 0x04) :  calldataload( offset)
+
+    0x24 calldataload     // [ b, a]
+
+    // duplicates values and store for overflow check  later
+
+    dup2 dup2 dup2        // [a, b, a, b, a]
+
+    mul                   // [a * b, a, b, a]
+
+    swap3                 // [a, b, a, a * b]
+
+    // we need to check for  () ||
+    // overflow if (a != 0 && result / a != b )
+    // not overflow if (a = 0 || result / a = b )
+
+    iszero                // [ is A Zero, b, a, a * b]
+
+    swap2 swap1           // [ a, b, is A Zero, a * b]
+
+    dup4                  // [ a * b, a, b, is A Zero, a * b]
+
+    div eq                // [ is (result / a) = b , is A Zero, a * b]
+
+    or                    // [ are both checks true, a * b]
+
+    end                   // [ counter of end ,  are both checks true, a * b ]
+    
+    jumpi                 // []
+
+    0x00 0x00 revert     //  [ ] 
+
+    end:
+        0x40
+        mstore
+
+        0x20 0x40 return
+
 }
