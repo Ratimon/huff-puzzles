@@ -18,3 +18,6 @@
 
 7-FooBar:
 	forge test -vvv --mc FooBarTest
+
+8-SimpleStore:
+	forge test -vvv --mc SimpleStoreTest

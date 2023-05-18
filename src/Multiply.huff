@@ -44,9 +44,7 @@
     // duplicates values and store for overflow check  later
 
     dup2 dup2 dup2        // [a, b, a, b, a]
-
     mul                   // [a * b, a, b, a]
-
     swap3                 // [a, b, a, a * b]
 
     // we need to check for  () ||
@@ -54,17 +52,11 @@
     // not overflow if (a = 0 || result / a = b )
 
     iszero                // [ is A Zero, b, a, a * b]
-
     swap2 swap1           // [ a, b, is A Zero, a * b]
-
     dup4                  // [ a * b, a, b, is A Zero, a * b]
-
     div eq                // [ is (result / a) = b, is A Zero, a * b]
-
     or                    // [ are check1 or check2 true, a * b]
-
     end                   // [ counter of end ,  are check1 or check2 true, a * b ]
-    
     jumpi                 // []
 
     0x00 0x00 revert     //  [ ] 
