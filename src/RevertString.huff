@@ -13,5 +13,7 @@
 
 
 #define macro MAIN() = takes(0) returns(0) {
+
+    // cast --format-bytes32-string "OnlyHuff"
     
 }

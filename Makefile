@@ -21,3 +21,6 @@
 
 8-SimpleStore:
 	forge test -vvv --mc SimpleStoreTest
+
+9-RevertCustom:
+	forge test -vvv --mc RevertCustomTest
