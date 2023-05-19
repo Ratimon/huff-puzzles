@@ -24,3 +24,6 @@
 
 9-RevertCustom:
 	forge test -vvv --mc RevertCustomTest
+
+10-RevertString:
+	forge test -vvv --mc RevertStringTest

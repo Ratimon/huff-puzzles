@@ -14,6 +14,18 @@
 
 #define macro MAIN() = takes(0) returns(0) {
 
-    // cast --format-bytes32-string "OnlyHuff"
+    // cast --format-bytes32-string "Only Huff"
+    
+    // Strings are basically dynamic arrays for the evm
+    0x20 0x00 mstore                    // mstore the  offset to the start of dynamic array (The ABI encoding)
+    0x09 0x20 mstore                    // mstore the length of the dynamic array
+    __RIGHTPAD(0x4f6e6c792048756666) 0x40 mstore    // mstore the value at the next slot
+    0x60 0x00 revert
+
+    // https://ethereum.stackexchange.com/questions/60563/why-is-the-returndata-of-a-function-returning-bytes-formatted-in-a-weird-way/60570#60570
+
+    // 0000000000000000000000000000000000000000000000000000000000000020 - offset to the start of data (The ABI encoding)
+    // 0000000000000000000000000000000000000000000000000000000000000009 - length
+    // 4f6e6c7920487566660000000000000000000000000000000000000000000000 - encoded string
     
 }
