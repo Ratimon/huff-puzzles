@@ -27,3 +27,8 @@
 
 10-RevertString:
 	forge test -vvv --mc RevertStringTest
+
+11-SumArray:
+	forge test -vvv --mc SumArrayTest
+
+	

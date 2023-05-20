@@ -13,4 +13,53 @@
 
 #define macro MAIN() = takes(0) returns(0) {
 
+    // cast abi-encode "sumArray(uint256[])"  '[1,2,3]'
+    // cast calldata "sumArray(uint256[])"  '[1,2,3]'
+
+    // calldata
+    // 0x1e2aea0600000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003
+
+    // 0x1e2aea06
+    // 0000000000000000000000000000000000000000000000000000000000000020
+    // 0000000000000000000000000000000000000000000000000000000000000003
+    // 0000000000000000000000000000000000000000000000000000000000000001
+    // 0000000000000000000000000000000000000000000000000000000000000002
+    // 0000000000000000000000000000000000000000000000000000000000000003
+
+    0x00 calldataload  0xE0 shr        // [ the first 4 bytes of msg.data]
+
+    dup1 __FUNC_SIG(sumArray) eq sumArray jumpi  // [ the first 4 bytes of msg.data]
+
+    0x00 0x00 revert
+
+    sumArray:
+        // get length of calldata
+        0x24 calldataload               // [ len]
+
+        // initialte a loop
+        // let`i`
+        0x00                            // [i, len]
+        // let`total`
+        0x00                            // [total, i, len]
+        loop jump
+
+        loop:
+            dup2                            // [i, total, i, len]
+            0x20 mul                        // [ 0x20 * i , total, i, len]
+            // offset at 68th
+            0x44 add                        // [ (0x20 * i) + 0x44 , total, i, len]
+            calldataload                    // [ msg.data[i], total, i, len]
+            add                             // [ total += msg.data[i] , i, len]
+            swap1                           // [ i, total , len]
+            0x1 add                         // [ i += 1, total , len]
+            swap1                           // [ total, i , len]
+            dup3 dup3                       // [ i, len, total, i, len]
+            lt loop jumpi                   // [total, i, len]
+       
+        0x00 mstore
+        pop pop pop
+        0x20 0x00 return
+
+
+
 }

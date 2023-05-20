@@ -24,6 +24,8 @@
 
     // https://ethereum.stackexchange.com/questions/60563/why-is-the-returndata-of-a-function-returning-bytes-formatted-in-a-weird-way/60570#60570
 
+    // memory
+    
     // 0000000000000000000000000000000000000000000000000000000000000020 - offset to the start of data (The ABI encoding)
     // 0000000000000000000000000000000000000000000000000000000000000009 - length
     // 4f6e6c7920487566660000000000000000000000000000000000000000000000 - encoded string

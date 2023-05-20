@@ -28,11 +28,13 @@
     0x00 0x00 revert     //  [  the first 4 bytes of msg.data] 
 
     read:
+        pop
         0x00 sload
         0x00 mstore
         returnvalue jump
 
     store:
+        pop
         0x04 calldataload
         0x00 sstore
         returnvalue jump

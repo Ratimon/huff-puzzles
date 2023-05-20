@@ -29,10 +29,12 @@
     0x00 0x00 revert     //  [  the first 4 bytes of msg.data] 
 
     foo:
+        pop
         0x02 0x00 mstore
         returnvalue jump
 
     bar:
+        pop
         0x03 0x00 mstore
         returnvalue jump
 
