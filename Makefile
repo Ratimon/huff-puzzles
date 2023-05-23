@@ -34,4 +34,7 @@
 12-Keccak:
 	forge test -vvv --mc KeccakTest
 
+13-MaxOfArray:
+	forge test -vvv --mc MaxOfArrayTest
+
 	

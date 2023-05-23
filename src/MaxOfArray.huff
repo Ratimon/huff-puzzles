@@ -10,5 +10,53 @@
 #define function maxOfArray(uint256[]) payable returns(uint256)
 
 #define macro MAIN() = takes(0) returns(0) {
+
+    0x00 calldataload  0xE0 shr        // [ the first 4 bytes of msg.data]
+
+    dup1 __FUNC_SIG(maxOfArray) eq maxOfArray jumpi  // [ the first 4 bytes of msg.data]
+
+    // 0x00 0x00 revert
+    err jump
+
+    maxOfArray:
+        // get length of calldata
+        0x24 calldataload               // [ len]
+
+        dup1 iszero err jumpi
+
+        // initialte a loop
+        // let`i`
+        0x00                            // [i, len]
+        loop jump
+
+
+        loop:
+            dup1                            // [i, i, len]
+            0x20 mul                        // [ 0x20 * i , i, len]
+            // offset at 68th
+            0x44 add                        // [ (0x20 * i) + 0x44 , i, len]
+            calldataload                    // [ msg.data[i], i, len]
+            0x00 mload                      // [max, msg.data[i], i, len]
+            dup2                            // [msg.data[i], max, msg.data[i], i, len]
+            gt storeWord jumpi              // [msg.data[i], i, len]
+            pop                             // [i, len]
+            0x01 add                        // [i+1, len]
+            dup2 dup2                       // [i+1, len, i+1, len]
+            lt loop jumpi                   // [i+1, len]
+            pop pop                         // []
+            0x20 0x00 return
+
+
+        //if current item of array is greater than saved max in memory
+        //save the array item as the new max
+        storeWord:
+            0x00 mstore //[i, len]
+            0x01 add //[i+1, len]
+            dup2 dup2 //[i+1, len, i+1, len]
+            lt loop jumpi
+
+        err:
+            0x00 0x00 revert
+
    
 }
