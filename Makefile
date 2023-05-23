@@ -31,4 +31,7 @@
 11-SumArray:
 	forge test -vvv --mc SumArrayTest
 
+12-Keccak:
+	forge test -vvv --mc KeccakTest
+
 	
