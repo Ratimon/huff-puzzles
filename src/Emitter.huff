@@ -13,5 +13,19 @@
 
 
  #define macro MAIN() = takes(0) returns(0) {
+
+    0x00 calldataload  0xE0 shr        // [ the first 4 bytes of msg.data]
+
+    dup1 __FUNC_SIG(value) eq value jumpi  // [ the first 4 bytes of msg.data]
+
+    pop 0x00 0x00 revert
+
+    value:
+        0x24 calldataload   //[num2]
+        0x00 mstore         //[]
+        0x04 calldataload   //[num1]
+        __EVENT_HASH(Value) //[sig, num1]
+        0x00 0x00 log2      //[0x00, 0x20, sig, num1]
+
     
  }
