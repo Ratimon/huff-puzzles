@@ -13,5 +13,74 @@
 
 
  #define macro MAIN() = takes(0) returns(0) {
+
+    0x00 calldataload  0xE0 shr        // [ the first 4 bytes of msg.data]
+
+    dup1 __FUNC_SIG(makeContract) eq makeContract jumpi  // [ the first 4 bytes of msg.data]
+
+    pop 0x00 0x00 revert
+
+
+    // Runtime code
+
+    // [00] PUSH3   0x0caffe --> 0x620caffe
+    // [04] PUSH1   00       --> 0x6000
+    // [06] MSTORE           --> 0x52 (Store value p=0xcaffe at position v=0x00 in memory)
+
+    // [07] PUSH1   20 --> 0x6020 (32 bytes)
+    // [09] PUSH1   00 --> 0x6000 (Value was stored in slot 0x80)
+    // [11] RETURN     --> 0xF3 (Return value at p=0x00 slot and of size s=0x20)
+
+    // => 620caffe60005260206000f3
+
+    // Init code (alternative 1)
+
+    // [00] PUSH1   0c --> 0x600C (12 bytes)
+    // [02] PUSH1   ?? --> 0x60?? 
+    // [04] PUSH1   00 --> 0x6000
+    // [06] CODECOPY   --> 0x39 (Calling the CODECOPY(t, f, s) 
+
+    // - t: The destination offset where the code will be in memory
+    // - f: This is the current position of the runtime opcode
+    // - s: the size of the runtime code in bytes
+
+    // [07] PUSH1   20 --> 0x600C (12 bytes)
+    // [09] PUSH1   00 --> 0x6000 (Value was stored in slot 0x00)
+    // [11] RETURN     --> 0xF3 (Return value at p=0x00 slot and of size s=0x0c)
+
+    // => 0x600C60??600039600C6000F3
+    // => 0x600C600C600039600C6000F3 (// [02] PUSH1   12 --> 0x600c )
+
+    // => 0x600c600c600039600c6000f3620caffe60005260206000f3  (size = 24 bytes (0x18))
+
+    // Init code (alternative 2)
+
+    // [00] PUSH1           0c --> 0x600C (12 bytes)
+    // [02] DUP1               --> 0x80
+    // [03] PUSH1           0c --> 0x6009 
+    // [05] RETURNDATASIZE     --> 0x3d
+    // [06] CODECOPY           --> 0x39 (Calling the CODECOPY(t, f, s)  CODECOPY(00 ,09, 0c)
+    // [07] RETURNDATASIZE     --> 0x3d
+    // [08] RETURN             --> 0xF3 (Return value at p=0x00 slot and of size s=0x0c)
+
+    // => 600c8060093d393df3
+    // => 600c8060093d393df3620caffe60005260206000f3 (size = 21 bytes (0x15))
+
+    makeContract:
+        // 0x600c8060093d393df3620caffe60005260206000f3 0x00 mstore
+        0x600c600c600039600c6000f3620caffe60005260206000f3 0x00 mstore
+
+        // 0x15 // size (21 bytes)
+        0x18 // size (24 bytes)
+
+        // 0x0b // offset (32 - 21 = 11) 
+        0x08 // offset (32 - 24 = 8)
+
+        0x00 // wei value
+        create
+        0x00 mstore
+        0x20 0x00 return
+
+
     
  }
