@@ -42,3 +42,6 @@
 
 15-Emitter:
 	forge test -vvv --mc EmitterTest
+
+16-Donations:
+	forge test -vvv --mc DonationsTest

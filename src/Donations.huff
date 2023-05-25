@@ -8,5 +8,46 @@
 #define function donated(address) payable returns(uint256)
 
 #define macro MAIN() = takes(0) returns(0) {
+
+    0x00 calldataload  0xE0 shr                // [ the first 4 bytes of msg.data]
+
+    dup1 __FUNC_SIG(donated) eq donated jumpi  // [ the first 4 bytes of msg.data]
+    callvalue iszero end jumpi
+
+    // receive default function
+    // preparing hash caller
+    caller 0x00 mstore                         // [ hash of msg.sender, the first 4 bytes of msg.data]
+    0x14 0x00 sha3                             // [ hash of msg.sender, the first 4 bytes of msg.data]
+    dup1                                       // [ hash of msg.sender, hash of msg.sender, the first 4 bytes of msg.data]
+
+    // slot[ hash(msg.sender) ] = tracked amount
+    sload                                      // [ loaded amount,             hash of msg.sender, the first 4 bytes of msg.data]
+    callvalue add                              // [ loaded amount + msg.value, hash of msg.sender, the first 4 bytes of msg.data]
+    swap1                                      // [ hash of msg.sender       , loaded amount + msg.value, the first 4 bytes of msg.data]
+    sstore                                     // [ the first 4 bytes of msg.data]
+    pop                                        // [ ]
+    // 0x00 0x00 return
+    end jump
+
+    donated:
+
+        // copy calldata in memory
+        0x14    // address size of 20 bytes       
+        0x04    // offset
+        0x00    // memory offset (destination)
+        calldatacopy                        
+
+        // hash address and store in stack
+        0x14 0x00 sha3                         // [ hash of address, the first 4 bytes of msg.data]
+        sload                                  // [ loaded value, the first 4 bytes of msg.data]
+        swap1 pop                              // [ loaded value]
+
+        
+        0x00 mstore
+        0x20 0x00 return
+
+    end:
+        0x00 0x00 return
+
     
 }

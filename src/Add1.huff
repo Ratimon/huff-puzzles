@@ -57,7 +57,7 @@
     // load 32 bytes of msg.data ( starting from offset 0x04) to the stack
     // calldataload( 0x04) :  calldataload( offset)
 
-    0x04 calldataload    // [ msg.data[4:] ]
+    0x04 calldataload   // [ msg.data[4:] ]
 
     0x01                // [0x1, msg.data[4:]]
     add                 // [1 + msg.data[4:]]
