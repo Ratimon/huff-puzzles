@@ -45,3 +45,6 @@
 
 16-Donations:
 	forge test -vvv --mc DonationsTest
+
+17-SendEther:
+	forge test -vvv --mc SendEtherTest
