@@ -13,4 +13,74 @@
 
 #define macro MAIN() = takes(0) returns(0) {
 
+    0x00 calldataload  0xE0 shr        // [ the first 4 bytes of msg.data]
+
+    dup1 __FUNC_SIG(balanceOf) eq balanceof jumpi  // [ the first 4 bytes of msg.data]
+    dup1 __FUNC_SIG(withdraw) eq withdraw jumpi  //  v
+
+    // receive default function
+    // preparing hash caller
+    caller 0x00 mstore                         // [ hash of msg.sender, the first 4 bytes of msg.data]
+    0x14 0x00 sha3                             // [ hash of msg.sender, the first 4 bytes of msg.data]
+    dup1                                       // [ hash of msg.sender, hash of msg.sender, the first 4 bytes of msg.data]
+
+    // slot[ hash(msg.sender) ] = tracked amount
+    sload                                      // [ loaded amount,             hash of msg.sender, the first 4 bytes of msg.data]
+    callvalue add                              // [ loaded amount + msg.value, hash of msg.sender, the first 4 bytes of msg.data]
+    swap1                                      // [ hash of msg.sender       , loaded amount + msg.value, the first 4 bytes of msg.data]
+    sstore                                     // [ the first 4 bytes of msg.data]
+    pop                                        // [ ]
+    end jump
+
+    balanceof:
+                // copy calldata in memory
+        0x14    // address size of 20 bytes       
+        0x04    // offset
+        0x00    // memory offset (destination)
+        calldatacopy                        
+
+        // hash address and store in stack
+        0x14 0x00 sha3                         // [ hash of address, the first 4 bytes of msg.data]
+        sload                                  // [ loaded value, the first 4 bytes of msg.data]
+        swap1 pop                              // [ loaded value]
+
+        
+        0x00 mstore
+        0x20 0x00 return
+
+    withdraw:
+        // preparing hash caller
+        caller 0x00 mstore                         // [ hash of msg.sender, the first 4 bytes of msg.data]
+        0x14 0x00 sha3                             // [ hash of msg.sender, the first 4 bytes of msg.data]
+        dup1                                       // [ hash of msg.sender, hash of msg.sender, the first 4 bytes of msg.data]
+
+        // slot[ hash(msg.sender) ] = tracked amount
+        sload                                      // [ loaded amount,                         hash of msg.sender, the first 4 bytes of msg.data]
+        dup1                                       // [ loaded amount, loaded amount,          hash of msg.sender, the first 4 bytes of msg.data]
+        0x04 calldataload                          // [ amount, loaded amount, loaded amount,  hash of msg.sender, the first 4 bytes of msg.data]
+        swap1 sub                                  // [ loaded amount - amount, loaded amount, hash of msg.sender, the first 4 bytes of msg.data]
+
+        dup1 swap2                                 // [ loaded amount , loaded amount - amount, loaded amount - amount, hash of msg.sender, the first 4 bytes of msg.data]
+        lt error jumpi                             // [ loaded amount - amount, hash of msg.sender, the first 4 bytes of msg.data]
+
+
+        swap1                                      // [ hash of msg.sender,         loaded amount - amount, the first 4 bytes of msg.data]
+        sstore                                     // [ the first 4 bytes of msg.data]
+        pop
+
+
+        0x00 dup1 dup1 dup1                        // [0, 0, 0, 0]
+        0x04 calldataload                          // [amount, 0, 0, 0, 0]
+        caller                                     // [msg.sender ,amount, 0, 0, 0, 0]
+        gas                                        // [gas, msg.sender ,amount, 0, 0, 0, 0]
+        call
+        iszero error jumpi
+        end jump
+
+    end:
+        0x00 0x00 return
+
+    error:
+        0x00 0x00 revert
+
 }

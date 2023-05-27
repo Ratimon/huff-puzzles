@@ -48,3 +48,6 @@
 
 17-SendEther:
 	forge test -vvv --mc SendEtherTest
+
+18-BasicBank:
+	forge test -vvv --mc BasicBankTest
