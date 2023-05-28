@@ -14,5 +14,45 @@
 
 
  #define macro MAIN() = takes(0) returns(0) {
+
+    0x00 calldataload  0xE0 shr        // [ the first 4 bytes of msg.data]
+
+    dup1 __FUNC_SIG(distribute) eq distribute jumpi  // [ the first 4 bytes of msg.data]
+
+    err jump
+
+    distribute:
+        0x24 calldataload       // [ len]
+
+        dup1 iszero err jumpi   // [ len]
+        dup1 callvalue div      // [ len/msg.value,len]
+
+        // let`i`
+        0x00                    // [ i, len/msg.value, len]
+        loop jump
+
+    loop:
+        dup1                    // [ i, i, len/msg.value, len]
+        0x20 mul                // [ 0x20 * i , i, len/msg.value, len]
+        // offset at 68th
+        0x44 add                // [ (0x20 * i) + 0x44 , i, len/msg.value, len]
+        calldataload            // [ msg.data[i], i, len/msg.value, len]
+        0x00 0x00 0x00          // [ 0x0, 0x0, 0x0, msg.data[i], i, len/msg.value, len]
+        dup6 0x00               // [ 0x0, len/msg.value, 0x0, 0x0, 0x0, msg.data[i], i, len/msg.value, len]
+        swap5                   // [ msg.data[i], len/msg.value, 0x0, 0x0, 0x0, 0x0, i, len/msg.value, len]
+        gas                     // [ gas, msg.data[i], len/msg.value, 0x0, 0x0, 0x0, 0x0, i, len/msg.value, len]
+        call                    // [ 0 or 1, i, len/msg.value, len]
+
+        pop                     // [ i, len/msg.value, len]
+        // iszero error jumpi      // [ i, len/msg.value, len]
+        
+        0x01 add                // [ i+1, len/msg.value, len]
+        dup3                    // [ len, i+1, len/msg.value, len]
+        dup2                    // [ i+1, len, i+1, len/msg.value, len]
+        lt loop jumpi           // [ i+1, len/msg.value, len]
+        pop pop pop stop
+
+    err:
+        0x00 0x00 revert
    
  }

@@ -51,3 +51,6 @@
 
 18-BasicBank:
 	forge test -vvv --mc BasicBankTest
+
+19-Distributor:
+	forge test -vvv --mc DistributeTest

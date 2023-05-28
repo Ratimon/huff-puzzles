@@ -15,7 +15,6 @@
 
     dup1 __FUNC_SIG(maxOfArray) eq maxOfArray jumpi  // [ the first 4 bytes of msg.data]
 
-    // 0x00 0x00 revert
     err jump
 
     maxOfArray:
@@ -28,7 +27,6 @@
         // let`i`
         0x00                            // [i, len]
         loop jump
-
 
         loop:
             dup1                            // [i, i, len]
