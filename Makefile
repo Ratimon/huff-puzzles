@@ -54,3 +54,6 @@
 
 19-Distributor:
 	forge test -vvv --mc DistributeTest
+
+20-SimulateArray:
+	forge test -vvv --mc SimulateArrayTest

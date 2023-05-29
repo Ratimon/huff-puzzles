@@ -15,10 +15,8 @@
 
  #define macro MAIN() = takes(0) returns(0) {
 
-    0x00 calldataload  0xE0 shr        // [ the first 4 bytes of msg.data]
-
+    0x00 calldataload  0xE0 shr                      // [ the first 4 bytes of msg.data]
     dup1 __FUNC_SIG(distribute) eq distribute jumpi  // [ the first 4 bytes of msg.data]
-
     err jump
 
     distribute:

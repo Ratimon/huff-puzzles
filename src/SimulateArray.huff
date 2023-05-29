@@ -25,5 +25,101 @@
  #define error ZeroArray()
 
  #define macro MAIN() = takes(0) returns(0) {
+
+    // we need the pointer to the keccak256 of the storage slot
+    //   T[] v => v[n] => keccak256(v’s slot)+ n*(sizeof(T)) 
+    //   v.length => v’s slot
+
+    // store 0 at 0th offset
+    0x00 0x00 mstore                                 
+    0x20 0x00 sha3                                   // [ ptr to 0th]
+
+    0x00 calldataload  0xE0 shr                      // [ the first 4 bytes of msg.data,  ptr to 0th]
+    dup1 __FUNC_SIG(pushh) eq pushh jumpi            // [ the first 4 bytes of msg.data,  ptr to 0th]
+    dup1 __FUNC_SIG(popp) eq popp jumpi              // [ the first 4 bytes of msg.data,  ptr to 0th]
+    dup1 __FUNC_SIG(read) eq read jumpi              // [ the first 4 bytes of msg.data,  ptr to 0th]
+    dup1 __FUNC_SIG(length) eq length jumpi          // [ the first 4 bytes of msg.data,  ptr to 0th]
+    dup1 __FUNC_SIG(write) eq write jumpi            // [ the first 4 bytes of msg.data,  ptr to 0th]
+
+    pop                                              // [ ptr to 0th]
+    err jump
+
+    pushh:
+        pop
+        0x00                             // [ 0, ptr to 0th]
+        sload dup1                       // [ len, len, ptr to 0th]
+        0x01 add                         // [ len + 1, len, ptr to 0th]
+        0x00                             // [ 0, len + 1, len, ptr to 0th]
+        sstore                           // [ len, ptr to 0th]
+        add                              // [ ptr to len th]
+        0x04 calldataload swap1          // [ ptr to len th, msg.data[4:] ]
+        sstore                           // []
+        0x00 0x00 return
+
+    popp:
+        pop                              // [ ptr to 0th]
+        0x00                             // [ 0, ptr to 0th]
+        sload dup1 0x00                  // [ 0, len, len, ptr to 0th]
+        eq revertZeroArray jumpi         // [ len, ptr to 0th]
+        0x01 dup2                        // [ len, 1, len, ptr to 0th]
+        sub                              // [ len - 1, len, ptr to 0th]
+        0x00                             // [ 0, len - 1, len , ptr to 0th]
+        sstore                           // [ len, ptr to 0th]
+        add                              // [ ptr to len th]
+        0x00 swap1                       // [ ptr to len th, 0]
+        sstore
+        0x00 0x00 return
+
+    read:
+        pop                              // [ ptr to 0th]
+        0x00                             // [ 0, ptr to 0th]
+        sload dup1                       // [ len, len, ptr to 0th]
+        0x04 calldataload                // [ index, i, len, len, ptr to 0th]
+        0x01 add                         // [ index + 1 , len, len, ptr to 0th] 
+        gt                               // [ isIndexGtLen, len, ptr to 0th]
+        swap1 iszero                     // [ isLenZero, isIndexGtLen, ptr to 0th]
+        or                               // [ areChecksPassed, ptr to 0th]
+        revertOutOfBounds jumpi          // [ ptr to 0th]
+
+        0x04 calldataload add            // [ ptr to index th]
+        sload                            // [ loaded value]
+        0x00 mstore
+        0x20 0x00 return
+
+    length:
+        pop                              // [ ptr to 0th]
+        0x00                             // [ 0, ptr to 0th]
+        sload                            // [ len, ptr to 0th]
+        0x00 mstore                      // [ ]
+        0x20 0x00 return  
+
+    write:
+        pop                              // [ ptr to 0th]
+        0x00                             // [ 0, ptr to 0th]
+        sload dup1                       // [ len, len, ptr to 0th]
+        0x04 calldataload                // [ index, i, len, len, ptr to 0th]
+        0x01 add                         // [ index + 1 , len, len, ptr to 0th]
+        gt                               // [ isIndexGtLen, len, ptr to 0th]
+        swap1 iszero                     // [ isLenZero, isIndexGtLen, ptr to 0th]
+        or                               // [ areChecksPassed, ptr to 0th]
+        revertOutOfBounds jumpi          // [ ptr to 0th]
+        0x04 calldataload add            // [ ptr to index th]
+        0x24 calldataload swap1          // [ ptr to index th, msg.data[24:44] ]
+        sstore
+        0x00 0x00 return 
+
+    err:
+        0x00 0x00 revert
+
+    revertOutOfBounds:                   // [len]
+        pop                              // []
+        __ERROR(OutOfBounds) 0x00 mstore 
+        0x04 0x00 revert
+
+    revertZeroArray:                    // [len, ptr to 0th]
+        pop pop                        
+        __ERROR(ZeroArray) 0x00 mstore  
+        0x04 0x00 revert
+
     
  }
