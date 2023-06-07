@@ -24,7 +24,12 @@
     0x14 0x00 sha3                             // [ hash of msg.sender, the first 4 bytes of msg.data]
     dup1                                       // [ hash of msg.sender, hash of msg.sender, the first 4 bytes of msg.data]
 
-    // slot[ hash(msg.sender) ] = tracked amount
+    // Declaration         - mapping(T1 => T2) v
+    // Value               - v[key]
+    // Location in storage - keccak256(key + v’s slot)
+
+    // v[ hash(msg.sender + 0) ] = tracked amount
+
     sload                                      // [ loaded amount,             hash of msg.sender, the first 4 bytes of msg.data]
     callvalue add                              // [ loaded amount + msg.value, hash of msg.sender, the first 4 bytes of msg.data]
     swap1                                      // [ hash of msg.sender       , loaded amount + msg.value, the first 4 bytes of msg.data]

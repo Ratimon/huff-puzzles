@@ -26,8 +26,12 @@
 
     // memory
     
+    // offset of amount array => 1* 32 = 224 bytes (1 line ) below from start of  1st (address in this case) line
     // 0000000000000000000000000000000000000000000000000000000000000020 - offset to the start of data (The ABI encoding)
+
+    // length of array
     // 0000000000000000000000000000000000000000000000000000000000000009 - length
+
     // 4f6e6c7920487566660000000000000000000000000000000000000000000000 - encoded string
     
 }

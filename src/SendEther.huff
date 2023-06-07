@@ -18,7 +18,6 @@
     dup1 __FUNC_SIG(sendEther) eq sendEther jumpi  // [ the first 4 bytes of msg.data]
     
     error jump
-    // 0x00 0x00 revert
 
     sendEther:
         0x00 dup1 dup1 dup1                     // [0, 0, 0, 0]
